@@ -1,0 +1,5 @@
+psutil~=5.9.0
+fastapi~=0.78.0
+uvicorn[standard]
+
+pydantic~=1.9.1
