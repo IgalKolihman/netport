@@ -1,2 +1,4 @@
-psutil~=5.9.0
-fastapi~=0.78.0
+redis
+psutil
+fastapi
+uvicorn[standard]
