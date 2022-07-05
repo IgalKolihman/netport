@@ -24,7 +24,7 @@ def test_port_is_not_in_use(butler):
 def test_port_is_in_use(butler):
     test_port = 12345
     with socket.socket() as s:
-        s.bind(('', test_port))
+        s.bind(("", test_port))
         s.listen(1)
         response = butler.get(f"/networking/is_port_in_use", params={"port": test_port})
         assert response.json() is True
@@ -40,7 +40,9 @@ def test_port_is_reserved_after_requesting_it(butler):
         params={"resource": R_PORT, "value": used_port},
     )
 
-    assert response.json() is True, f"The port {used_port} wasn't reserved in the database"
+    assert (
+        response.json() is True
+    ), f"The port {used_port} wasn't reserved in the database"
 
 
 def test_get_list_of_all_available_interfaces(butler):

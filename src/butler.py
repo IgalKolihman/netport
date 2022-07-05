@@ -26,7 +26,6 @@ class Database:
     def is_reserved(self, resource: str, value):
         """Check if the requested resource is already reserved."""
         for client in self.get_all_clients():
-            print(client)
             for _ in self.get_client_resources(client, resource, value):
                 return True
 
@@ -187,6 +186,9 @@ def is_path_exist(path: str):
 
 @app.get("/fs/reserve_path")
 def reserve_path(request: Request, path: str):
+    if not exists(path):
+        return False
+
     return db.reserve(request.client.host, R_PATH, path)
 
 
