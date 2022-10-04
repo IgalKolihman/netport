@@ -1,9 +1,27 @@
 [tool.poetry]
 name = "netport"
 version = "0.1.0"
-description = "Tool for managing resources on a remove machine"
-authors = ["Igal Kolihman <https://github.com/IgalKolihman>"]
+description = "Tool for managing resources on a remove machine using openapi"
+authors = ["Igal Kolihman <igalk.spam@gmail.com>"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/IgalKolihman/netport"
+repository = "https://github.com/IgalKolihman/netport"
+keywords = ["manager", "resources", "remote", "managing", "network", "networking", "openapi"]
+classifiers = [
+    "Topic :: System :: Networking",
+    "Topic :: System :: Networking :: Monitoring",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System",
+    "Framework :: FastAPI",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10"
+]
+include = [
+    "LICENSE.md",
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"
