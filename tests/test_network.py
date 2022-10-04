@@ -2,7 +2,7 @@ import socket
 
 import psutil
 import pytest
-from src.butler import R_PORT
+from netport.netport import R_PORT
 
 
 @pytest.mark.repeat(25)
