@@ -1,7 +1,0 @@
-redis
-requests
-pytest
-pytest-repeat
-psutil
-fastapi
-uvicorn[standard]
