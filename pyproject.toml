@@ -3,6 +3,7 @@ name = "netport"
 version = "0.1.0"
 description = "Tool for managing resources on a remove machine"
 authors = ["Igal Kolihman <https://github.com/IgalKolihman>"]
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.7"
