@@ -5,9 +5,9 @@ import subprocess
 from os.path import exists
 
 import psutil
-from redis import exceptions as redis_errors
 from redis.client import Redis
 from fastapi import FastAPI, Request
+from redis import exceptions as redis_errors
 
 R_PORT = "PORT"
 R_PATH = "PATH"

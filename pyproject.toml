@@ -2,7 +2,7 @@
 name = "netport"
 version = "0.1.0"
 description = "Tool for managing resources on a remove machine"
-authors = ["Igal Kolihman <igal.kolihman@gmail.com>"]
+authors = ["Igal Kolihman <https://github.com/IgalKolihman>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"

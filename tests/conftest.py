@@ -1,8 +1,8 @@
 import pytest
-from fastapi.testclient import TestClient
 from redis.client import Redis
+from fastapi.testclient import TestClient
 
-from src.butler import app
+from netport.netport import app
 
 
 @pytest.fixture()
