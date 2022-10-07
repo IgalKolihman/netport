@@ -1,3 +1,9 @@
+# pylint: disable-import-outside-toplevel
+"""Netport fastapi server.
+
+Contains all netport functionalities.
+"""
+import os
 import time
 import socket
 import datetime
@@ -15,9 +21,9 @@ R_PROCESS = "PROCESS"
 
 
 class Database:
-    def __init__(self, host: str = "localhost", port: int = 6379):
+    def __init__(self, host: str = "localhost", port: int = 6379, db_instance=0):
         try:
-            self._db = Redis(host=host, port=port, db=0)
+            self._db = Redis(host=host, port=port, db=db_instance)
             self._db.ping()
 
         except redis_errors.TimeoutError:
@@ -63,8 +69,12 @@ class Database:
         return self._db.scan(cursor=0, match="*")[1]
 
 
+redis_host = os.environ.get("NETPORT_REDIS_HOST", "127.0.0.1")
+redis_port = os.environ.get("NETPORT_REDIS_PORT", 6379)
+redis_db = os.environ.get("NETPORT_REDIS_DB", 0)
+
 app = FastAPI()
-db = Database()
+db = Database(host=redis_host, port=redis_port, db_instance=redis_db)
 running_processes = []
 
 
@@ -72,7 +82,7 @@ def _is_port_in_use(port: int):
     """Checks if the given port is in use.
 
     Args:
-        port (int): The port to use
+        port (int): The port to check
 
     Returns:
         bool. If the port is in use.
@@ -88,7 +98,7 @@ def reserve(request: Request, resource: str, value):
 
 @app.get("/db/is_reserved")
 def is_reserved(resource: str, value: str):
-    """Checks if the given port is in use.
+    """Check if the given resource is in use.
 
     Args:
         resource (str): The resource type
@@ -102,26 +112,31 @@ def is_reserved(resource: str, value: str):
 
 @app.get("/db/my_resources")
 def my_resources(request: Request, resource: str):
+    """Get all resources that are reserved to the client."""
     return db.get_client_resources(request.client.host, resource)
 
 
 @app.get("/db/get_client_resources")
 def get_client_resources(client_ip: str, resource: str = "*", value: str = "*"):
+    """Get all resources that are reserved for a specific client."""
     return db.get_client_resources(client_ip, resource, value)
 
 
 @app.get("/db/release_resource")
 def release_resource(request: Request, resource: str, value):
+    """Release a resource for the requesting client."""
     return db.release_resource(request.client.host, resource, value) == 1
 
 
 @app.get("/db/release_client")
 def release_client(request: Request):
+    """Release all resources that are reserved for the requesting client."""
     return db.release_client(request.client.host) == 1
 
 
 @app.get("/db/get_all_clients")
 def get_all_clients():
+    """Get all clients that hold resources."""
     return db.get_all_clients()
 
 
@@ -161,16 +176,13 @@ def is_port_in_use(port: int):
 
 @app.get("/networking/whats_my_ip")
 def whats_my_ip(request: Request):
-    """Example of how to get clients ip.
-
-    will be used for locking stuff for each user.
-    """
+    """Check how netport sees the client's ip."""
     return request.client.host
 
 
 @app.get("/networking/list_interfaces")
 def list_interfaces():
-    """List all open network interfaces.
+    """List all available network interfaces.
 
     Returns:
         list. Network interfaces.
@@ -181,11 +193,13 @@ def list_interfaces():
 
 @app.get("/fs/is_path_exist")
 def is_path_exist(path: str):
+    """Check if the given path exists on the machine."""
     return exists(path.strip())
 
 
 @app.get("/fs/reserve_path")
 def reserve_path(request: Request, path: str):
+    """Reserve a path for the client."""
     if not exists(path):
         return False
 
@@ -194,6 +208,7 @@ def reserve_path(request: Request, path: str):
 
 @app.get("/shell/execute_command")
 def execute_command(command: str):
+    """Run a shell command and returns its result."""
     return (
             subprocess.call(
                 command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
@@ -204,6 +219,7 @@ def execute_command(command: str):
 
 @app.get("/shell/run_process")
 def run_process(request: Request, command: str):
+    """Run a process on the machine."""
     if db.reserve(request.client.host, R_PROCESS, command):
         process = subprocess.Popen(command.split(" "))
         running_processes.append(process)
@@ -214,6 +230,7 @@ def run_process(request: Request, command: str):
 
 @app.get("/shell/is_process_running")
 def is_process_running(name: str):
+    """Check if the process already runs."""
     for proc in psutil.process_iter():
         try:
             if name.lower() in proc.name().lower():

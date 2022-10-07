@@ -1,12 +1,11 @@
 import pytest
-from redis.client import Redis
 from fastapi.testclient import TestClient
 
 from netport.netport import app
 
 
 @pytest.fixture()
-def butler():
+def netport():
     client = TestClient(app)
     yield client
 
