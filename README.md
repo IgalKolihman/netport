@@ -42,7 +42,7 @@ To install and run a basic Redis database locally on your PC, run the following 
 
 ```sh
 sudo apt install redis
-systemct start reais
+systemctl start redis
 ```
 
 If Redis is already installed on the machine, run the following command to check the status of the

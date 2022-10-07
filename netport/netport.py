@@ -69,7 +69,7 @@ class Database:
         return self._db.scan(cursor=0, match="*")[1]
 
 
-redis_host = os.environ.get("NETPORT_REDIS_HOST", "0.0.0.0")
+redis_host = os.environ.get("NETPORT_REDIS_HOST", "127.0.0.1")
 redis_port = os.environ.get("NETPORT_REDIS_PORT", 6379)
 redis_db = os.environ.get("NETPORT_REDIS_DB", 0)
 
