@@ -1,21 +1,18 @@
 import json
+import os
 import sys
 
 import uvicorn
 
 from netport.netport import app
 
+DEFAULT_HOST = "0.0.0.0"
+DEFAULT_PORT = 80
+
 
 def run():
-    try:
-        host = sys.argv[1]
-    except IndexError:
-        host = "0.0.0.0"
-
-    try:
-        port = int(sys.argv[2])
-    except IndexError:
-        port = 80
+    host = os.environ.get("NETPORT_HOST", DEFAULT_HOST)
+    port = int(os.environ.get("NETPORT_PORT", DEFAULT_PORT))
 
     uvicorn.run(app, host=host, port=port)
 

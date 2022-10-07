@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netport"
-version = "0.1.0"
+version = "0.2.0"
 description = "Tool for managing resources on a remove machine using openapi"
 authors = ["Igal Kolihman <igalk.spam@gmail.com>"]
 license = "MIT"
@@ -41,3 +41,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 netport = 'netport.cli:run'
+build_netport_api = 'netport.cli:generate_open_api_scheme'
