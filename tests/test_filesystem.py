@@ -7,7 +7,7 @@ import pytest
 
 def random_string(length):
     letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for _ in range(length))
+    return "".join(random.choice(letters) for _ in range(length))
 
 
 @pytest.mark.parametrize(
@@ -31,8 +31,7 @@ def test_reserve_path(netport, path):
 
 
 @pytest.mark.parametrize(
-    "path",
-    [random_string(length) for length in range(10, 100, 5)]
+    "path", [random_string(length) for length in range(10, 100, 5)]
 )
 def test_reserve_not_existing_path(netport, path):
     response = netport.get("/fs/reserve_path", params={"path": path})
