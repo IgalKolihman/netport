@@ -46,5 +46,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-netport = 'netport.cli:run'
-build_netport_api = 'netport.cli:generate_open_api_scheme'
+netport = 'scripts.cli:main'
