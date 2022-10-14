@@ -88,6 +88,12 @@ def release_client(request: Request, client: str = None):
     return db.release_client(request.client.host) == 1
 
 
+@app.get("/db/get_all_resources")
+def get_all_resources():
+    """Get all clients that hold resources."""
+    return db.get_all_resources()
+
+
 @app.get("/db/get_all_clients")
 def get_all_clients():
     """Get all clients that hold resources."""
