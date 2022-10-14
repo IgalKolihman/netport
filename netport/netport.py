@@ -4,78 +4,21 @@
 Contains all netport functionalities.
 """
 import os
-import time
 import socket
-import datetime
 import subprocess
 from os.path import exists
 
 import psutil
-from redis.client import Redis
+from loguru import logger
 from fastapi import FastAPI, Request
 from redis import exceptions as redis_errors
 
-R_PORT = "PORT"
-R_PATH = "PATH"
-R_PROCESS = "PROCESS"
-
-
-class Database:
-    def __init__(self, host: str = "localhost", port: int = 6379, db_instance=0):
-        try:
-            self._db = Redis(host=host, port=port, db=db_instance)
-            self._db.ping()
-
-        except redis_errors.TimeoutError:
-            raise TimeoutError("Couldn't connect to the Redis database")
-
-    def is_reserved(self, resource: str, value):
-        """Check if the requested resource is already reserved."""
-        for client in self.get_all_clients():
-            for _ in self.get_client_resources(client, resource, value):
-                return True
-
-        return False
-
-    def reserve(self, client_ip: str, resource: str, value):
-        """Reserve some resource for a client."""
-        if self.is_reserved(resource, value):
-            return False
-
-        return (
-                self._db.hset(
-                    client_ip,
-                    f"{resource}:{value}",
-                    datetime.datetime.utcfromtimestamp(time.time()).strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    ),
-                )
-                == 1
-        )
-
-    def get_client_resources(
-            self, client_ip: str, resource_regex: str = "*", value_regex: str = "*"
-    ):
-        """Get all the client resources that match the resource regex pattern."""
-        return self._db.hscan_iter(client_ip, match=f"{resource_regex}:{value_regex}")
-
-    def release_resource(self, client_ip: str, resource: str, value):
-        return self._db.hdel(client_ip, f"{resource}:{value}")
-
-    def release_client(self, client_ip: str):
-        return self._db.delete(client_ip) == 1
-
-    def get_all_clients(self):
-        return self._db.scan(cursor=0, match="*")[1]
-
-
-redis_host = os.environ.get("NETPORT_REDIS_HOST", "127.0.0.1")
-redis_port = os.environ.get("NETPORT_REDIS_PORT", 6379)
-redis_db = os.environ.get("NETPORT_REDIS_DB", 0)
+from netport.common import R_PORT, R_PATH, R_PROCESS
+from netport.database import RedisDatabase, LocalDatabase, IDatabase
 
 app = FastAPI()
-db = Database(host=redis_host, port=redis_port, db_instance=redis_db)
 running_processes = []
+db: IDatabase = NotImplemented
 
 
 def _is_port_in_use(port: int):
@@ -117,8 +60,16 @@ def my_resources(request: Request, resource: str):
 
 
 @app.get("/db/get_client_resources")
-def get_client_resources(client_ip: str, resource: str = "*", value: str = "*"):
+def get_client_resources(
+        request: Request,
+        client_ip: str = None,
+        resource: str = r"(.)+",
+        value: str = r"(.)+",
+):
     """Get all resources that are reserved for a specific client."""
+    if not client_ip:
+        client_ip = request.client.host
+
     return db.get_client_resources(client_ip, resource, value)
 
 
@@ -129,8 +80,11 @@ def release_resource(request: Request, resource: str, value):
 
 
 @app.get("/db/release_client")
-def release_client(request: Request):
+def release_client(request: Request, client: str = None):
     """Release all resources that are reserved for the requesting client."""
+    if client:
+        return db.release_client(client) == 1
+
     return db.release_client(request.client.host) == 1
 
 
@@ -240,3 +194,26 @@ def is_process_running(name: str):
             pass
 
     return False
+
+
+def run_app():
+    global db
+    redis_host = os.environ.get("NETPORT_REDIS_HOST", None)
+    redis_port = os.environ.get("NETPORT_REDIS_PORT", None)
+    redis_db = os.environ.get("NETPORT_REDIS_DB", None)
+
+    try:
+        db = RedisDatabase(host=redis_host, port=redis_port, db_instance=redis_db)
+        logger.success(
+            f"Connected to Redis database at {redis_host}:{redis_port},{redis_db}"
+        )
+
+    except (redis_errors.ConnectionError, TypeError):
+        db = LocalDatabase()
+        logger.success("Initiated a local database")
+
+    return app
+
+
+if __name__ == "__main__":
+    run_app()
