@@ -21,6 +21,8 @@ classifiers = [
 ]
 include = [
     "LICENSE.md",
+    "netport/*",
+    "scripts/*"
 ]
 
 [tool.poetry.dependencies]
