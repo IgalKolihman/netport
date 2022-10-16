@@ -1,76 +1,57 @@
 # Netport
 
-Netport is a resource management solution for single Unix machine. Netport manages the access to
-different types ot resources on the OS that cannot be accessed by multiple users.
+Netport is a tool for managing single-access resources on the target Unix machine. Netport manages
+the access to different types of resources on the operating system by not allowing multiple requests
+to the same resource. For example ports, files, processes, network interfaces, and more...
 
-Today Netport is capable to manage: ports, files, processes and network interfaces.
+# How it works
+
+Netport runs in a single python process on the target machine. It uses the
+[FastAPI](https://fastapi.tiangolo.com/) framework to make a high performance and easy to use REST
+api server. The users can easily perform a variety of requests to various resources by using this
+REST API. Requests like:
+
+* Acquire a free port.
+* Check if file exists
+* Declare that a file is being used
+* Start a process
+* Get a list of already acquired resources
+
+In order to maintain an active memory of the used resources, Netport communicates with a database.
+There are 2 types of supported databases that netport uses: Redis database and local pythonic
+database.
+
+Both databases serve the purpose of netport, but with one draw back for the local database. The
+local database doesn't save netport's state after a shutdown or a reboot.
 
 # Installation
 
-Netport is a python module that communicates with a **Redis** database in order to hold and manage
-its resources.
+Make sure that python is installed on your machine (3.7 and above). Open your terminal and run the
+following command: _(It is advised to use a dedicated python virtual environment for netport.)_
 
-## Netport Server
-
-### pip install
-
-To Install Netport, run the following command in your python virtual environment
-
-```sh
+```shell
 pip install netport
 ```
 
-> ### development installation
->
-> Clone this repository:
-> ```sh
-> git clone https://github.com/IgalKolihman/netport.git
-> ```
-> 
-> then run:
->
-> ```sh
-> pip install -r reguirements. ext
-> ```
+# Developer Installation
 
-### installing the redis database
+Install poetry by following the instructions [here](https://python-poetry.org/docs/).
 
-Netport integrates with redis, so in order to be able to run the Netport server, a database must be
-accessible somewhere in the network.
+Clone this repository:
 
-To install and run a basic Redis database locally on your PC, run the following commands:
-
-```sh
-sudo apt install redis
-systemctl start redis
+```shell
+git clone https://github.com/IgalKolihman/netport.git
 ```
 
-If Redis is already installed on the machine, run the following command to check the status of the
-process:
+Install the development environment:
 
-```sh
-systemctl status redis
+```shell
+poetry install --with dev
 ```
 
-## Netport Client
+# Usage
 
-### pip install
-
-Install the package using pip:
-
-```sh
-pip install NetportClient
-```
-
-Then import the package in your code:
-
-```python
-import netport_client
-```
-
-# Running Server
-
-Please follow the [installation procedure](#installation) for how to install the Netport server 
+Please follow the [installation procedure](#installation) for how to install the Netport server
 and then run the following command in your terminal:
 
 ```sh
@@ -80,16 +61,8 @@ netport
 After running, a link will appear in the terminal to the server's url. The API documentation will
 be available at: "http://host_ip:port/docs"
 
-# Configuration
+For more help regarding any netport execution, run the following command:
 
-When initialized, Netport tries to connect to the Redis database. Netport connects with his default
-values, but it is possible to change them.
-
-Netport will override its default values if specific environment variables are set. The following
-table describes those variables and their purpose:
-
-| *Variable*         | **Description**                   | **Defanlt** |
-|--------------------|-----------------------------------|-------------|
-| NETPORT_REDIS_HOST | Redis's host name to connect      | 0.0.0.0     |
-| NETPORT_REDIS_PORT | Redis's DB port to connect        | 6379        |
-| NETPORT_REDIS_DB   | The DB number inside redis to use | 0           |
+```shell
+netport -h
+```
