@@ -47,3 +47,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 netport = 'scripts.cli:main'
+
+[tool.pytest.ini_options]
+redis = { host = "127.0.0.1", port = "6379", db = "0" }
