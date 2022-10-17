@@ -209,14 +209,24 @@ def run_app():
     redis_db = os.environ.get("NETPORT_REDIS_DB", None)
 
     try:
+        if None in [redis_host, redis_port, redis_db]:
+            raise AttributeError
+
         db = RedisDatabase(host=redis_host, port=redis_port, db_instance=redis_db)
         logger.success(
             f"Connected to Redis database at {redis_host}:{redis_port},{redis_db}"
         )
 
-    except (redis_errors.ConnectionError, TypeError):
+    except AttributeError:
         db = LocalDatabase()
         logger.success("Initiated a local database")
+
+    except (redis_errors.ConnectionError, TypeError) as error:
+        msg = f"Couldn't connect to the redis database due to bad parameters: host={redis_host}, " \
+              f"port={redis_port}, db={redis_db}."
+
+        logger.error(msg)
+        raise ConnectionError(msg) from error
 
     return app
 
