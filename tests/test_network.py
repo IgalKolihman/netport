@@ -20,7 +20,7 @@ def test_port_is_not_in_use(netport):
     response = netport.get("/networking/get_port")
     used_port = response.json()["port"]
 
-    response = netport.get(f"/networking/is_port_in_use", params={"port": used_port})
+    response = netport.get("/networking/is_port_in_use", params={"port": used_port})
     assert response.json() is False
 
 
@@ -31,7 +31,7 @@ def test_port_is_in_use(netport):
         s.bind(("", test_port))
         s.listen(1)
         response = netport.get(
-            f"/networking/is_port_in_use", params={"port": test_port}
+            "/networking/is_port_in_use", params={"port": test_port}
         )
         assert response.json() is True
 
@@ -43,7 +43,7 @@ def test_port_is_reserved_after_requesting_it(netport):
     used_port = response.json()["port"]
 
     response = netport.get(
-        f"/db/is_reserved",
+        "/db/is_reserved",
         params={"resource": R_PORT, "value": used_port},
     )
 
