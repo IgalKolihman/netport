@@ -10,7 +10,7 @@ all_db = pytest.mark.parametrize("netport", (True, False), indirect=True)
 
 
 def pytest_addoption(parser):
-    parser.addini('redis', 'Redis database address, port and db to use for testing.')
+    parser.addini("redis", "Redis database address, port and db to use for testing.")
 
 
 def pop_env_key(env_key: str):
