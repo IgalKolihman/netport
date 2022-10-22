@@ -4,7 +4,10 @@
 Contains all netport functionalities.
 """
 import os
+import re
+import uuid
 import socket
+import platform
 import subprocess
 from os.path import exists
 
@@ -202,6 +205,21 @@ def is_process_running(name: str):
     return False
 
 
+@app.get("/system/get_system_info")
+def get_system_info():
+    return {
+        "platform": platform.system(),
+        "platform-release": platform.release(),
+        "platform-version": platform.version(),
+        "architecture": platform.machine(),
+        "hostname": socket.gethostname(),
+        "ip-address": socket.gethostbyname(socket.gethostname()),
+        "mac-address": ":".join(re.findall("..", "%012x" % uuid.getnode())),
+        "processor": platform.processor(),
+        "ram": str(round(psutil.virtual_memory().total / (1024.0 ** 3))) + " GB",
+    }
+
+
 def run_app():
     global db
     redis_host = os.environ.get("NETPORT_REDIS_HOST", None)
@@ -222,8 +240,10 @@ def run_app():
         logger.success("Initiated a local database")
 
     except (redis_errors.ConnectionError, TypeError) as error:
-        msg = f"Couldn't connect to the redis database due to bad parameters: host={redis_host}, " \
-              f"port={redis_port}, db={redis_db}."
+        msg = (
+            f"Couldn't connect to the redis database due to bad parameters: host={redis_host}, "
+            f"port={redis_port}, db={redis_db}."
+        )
 
         logger.error(msg)
         raise ConnectionError(msg) from error
