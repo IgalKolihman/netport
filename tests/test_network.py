@@ -30,9 +30,7 @@ def test_port_is_in_use(netport):
     with socket.socket() as s:
         s.bind(("", test_port))
         s.listen(1)
-        response = netport.get(
-            "/networking/is_port_in_use", params={"port": test_port}
-        )
+        response = netport.get("/networking/is_port_in_use", params={"port": test_port})
         assert response.json() is True
 
 
