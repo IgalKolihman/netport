@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netport"
-version = "0.2.0"
+version = "0.3.0"
 description = "Tool for managing resources on a remove machine using openapi"
 authors = ["Igal Kolihman <igalk.spam@gmail.com>"]
 license = "MIT"
