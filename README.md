@@ -1,4 +1,9 @@
-# Netport
+# Netport 
+
+![Licence](https://badgen.net/pypi/license/netport)
+![Python Versions](https://badgen.net/pypi/python/netport)
+![Pypi Version](https://badgen.net/pypi/v/netport)
+![Code Quality Status](https://github.com/IgalKolihman/netport/actions/workflows/pull_request.yaml/badge.svg)
 
 Netport is a tool for managing single-access resources on the target Unix machine. Netport manages
 the access to different types of resources on the operating system by not allowing multiple requests
