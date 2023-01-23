@@ -3,7 +3,9 @@
 Usage:
     netport -h | --help
     netport -g [<path>]
-    netport [-H <host>] [-p <port>] [--redis=<redis-address>]
+    netport -p <port>
+    netport [-H <host>] [--redis=<redis-address>]
+    netport [-H <host> -p <port>] [--redis=<redis-address>]
 
 Options:
   -h --help             Show this screen.
@@ -48,8 +50,10 @@ def main():
         generate_open_api_scheme(args["<path>"])
         exit()
 
+    print(args)
+
     host = args["<host>"] if args["--host"] else DEFAULT_HOST
-    port = args["<port>"] if args["--port"] else DEFAULT_PORT
+    port = int(args["<port>"]) if args["--port"] else DEFAULT_PORT
 
     if args["--redis"]:
         redis_addr, redis_port, redis_db = args["--redis"].split(":")
@@ -59,8 +63,8 @@ def main():
 
     from netport.netport import run_app
 
-    uvicorn.run(run_app, host=host, port=int(port), log_level="info", factory=True)
+    uvicorn.run(run_app, host=host, port=port, log_level="info", factory=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
