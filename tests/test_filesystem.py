@@ -20,7 +20,7 @@ def test_path_exist(netport, path):
     response = netport.get("/fs/is_path_exist", params={"path": path})
 
     assert response.status_code == 200
-    assert response.json() is True, f"The server didn't find the path {path}"
+    assert response.json()["data"] is True, f"The server didn't find the path {path}"
 
 
 @all_db
@@ -31,7 +31,7 @@ def test_reserve_path(netport, path):
     response = netport.get("/fs/reserve_path", params={"path": path})
 
     assert response.status_code == 200
-    assert response.json() is True, f"The server didn't reserve the path {path}"
+    assert response.json()["data"] is True, f"The server didn't reserve the path {path}"
 
 
 @all_db
@@ -43,5 +43,5 @@ def test_reserve_not_existing_path(netport, path):
 
     assert response.status_code == 200
     assert (
-            response.json() is False
+        response.json()["data"] is False
     ), f"The server reserved a path that it didn't suppose to: '{path}'"

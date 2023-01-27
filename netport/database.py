@@ -15,7 +15,7 @@ class IDatabase:
         """Check if the requested resource is already reserved."""
         raise NotImplementedError
 
-    def reserve(self, client_ip: str, resource: str, value):
+    def reserve(self, client_ip: str, resource: str, value) -> bool:
         """Reserve some resource for a client."""
         raise NotImplementedError
 
@@ -106,7 +106,7 @@ class RedisDatabase(IDatabase):
 
         return False
 
-    def reserve(self, client_ip: str, resource: str, value):
+    def reserve(self, client_ip: str, resource: str, value) -> bool:
         """Reserve some resource for a client."""
         if self.is_reserved(resource, value):
             return False
@@ -172,7 +172,7 @@ class LocalDatabase(IDatabase):
 
         return False
 
-    def reserve(self, client_ip: str, resource: str, value):
+    def reserve(self, client_ip: str, resource: str, value) -> bool:
         """Reserve some resource for a client."""
         if self.is_reserved(resource, value):
             return False

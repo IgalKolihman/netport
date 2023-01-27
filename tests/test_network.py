@@ -11,17 +11,17 @@ from netport.netport import R_PORT
 def test_reserve_empty_port(netport):
     response = netport.get("/networking/get_port")
     assert response.status_code == 200
-    assert "port" in response.json().keys()
+    assert "port" in response.json()["data"].keys()
 
 
 @all_db
 @pytest.mark.repeat(10)
 def test_port_is_not_in_use(netport):
     response = netport.get("/networking/get_port")
-    used_port = response.json()["port"]
+    used_port = response.json()["data"]["port"]
 
     response = netport.get("/networking/is_port_in_use", params={"port": used_port})
-    assert response.json() is False
+    assert response.json()["data"] is False
 
 
 @all_db
@@ -31,14 +31,14 @@ def test_port_is_in_use(netport):
         s.bind(("", test_port))
         s.listen(1)
         response = netport.get("/networking/is_port_in_use", params={"port": test_port})
-        assert response.json() is True
+        assert response.json()["data"] is True
 
 
 @all_db
 @pytest.mark.repeat(10)
 def test_port_is_reserved_after_requesting_it(netport):
     response = netport.get("/networking/get_port")
-    used_port = response.json()["port"]
+    used_port = response.json()["data"]["port"]
 
     response = netport.get(
         "/db/is_reserved",
@@ -46,7 +46,7 @@ def test_port_is_reserved_after_requesting_it(netport):
     )
 
     assert (
-            response.json() is True
+        response.json()["data"] is True
     ), f"The port {used_port} wasn't reserved in the database"
 
 
@@ -56,4 +56,4 @@ def test_get_list_of_all_available_interfaces(netport):
     interfaces = list(interfaces_data.keys())
 
     response = netport.get("/networking/list_interfaces")
-    assert all(interface in response.json() for interface in interfaces)
+    assert all(interface in response.json()["data"] for interface in interfaces)
