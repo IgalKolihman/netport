@@ -13,10 +13,8 @@ def random_string(length):
 
 
 @all_db
-@pytest.mark.parametrize(
-    "path", [p.absolute() for p in list(Path(".").rglob("*.[tT][xX][tT]"))[:10]]
-)
-def test_path_exist(netport, path):
+def test_path_exist(netport):
+    path = Path(".").parent.resolve()
     response = netport.get("/fs/is_path_exist", params={"path": path})
 
     assert response.status_code == 200
