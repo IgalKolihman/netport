@@ -50,7 +50,7 @@ def netport(pytestconfig, request):
         if request.param:
             response = client.get("/db/release_client")
             assert (
-                    response.status_code == 200
+                response.status_code == 200
             ), "Something went wrong while releasing the client"
 
     finally:

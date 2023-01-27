@@ -18,9 +18,9 @@ def test_get_system_info(netport):
         "ip-address": socket.gethostbyname(socket.gethostname()),
         "mac-address": ":".join(re.findall("..", "%012x" % uuid.getnode())),
         "processor": platform.processor(),
-        "ram": str(round(psutil.virtual_memory().total / (1024.0 ** 3))) + " GB",
+        "ram": str(round(psutil.virtual_memory().total / (1024.0**3))) + " GB",
     }
 
     assert (
-            system_data == netport.get("/system/get_system_info").json()
+        system_data == netport.get("/system/get_system_info").json()["data"]
     ), "Returned wrong values for the system info"
