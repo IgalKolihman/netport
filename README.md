@@ -1,4 +1,4 @@
-# Netport 
+# Netport
 
 ![Licence](https://badgen.net/pypi/license/netport)
 ![Python Versions](https://badgen.net/pypi/python/netport)
@@ -10,6 +10,28 @@ the access to different types of resources on the operating system by not allowi
 to the same resource. For example ports, files, processes, network interfaces, and more...
 
 # How it works
+
+```mermaid
+flowchart TD
+    client([Client])
+    server[/Netport Server\]
+    database[(Database)]
+    resources{{Resources}}
+    ports(Ports)
+    interfaces(Interfaces)
+    fs(File System)
+    proc(System Processes)
+    info(System Info)
+    
+    client <--REST API requests--> server
+    server <--stores server state---> database
+    server <----> resources
+    resources --- ports
+    resources --- interfaces
+    resources --- fs
+    resources --- proc
+    resources --- info
+```
 
 ## Framework
 
@@ -59,13 +81,13 @@ pip install netport
 
 Install poetry by following the instructions [here](https://python-poetry.org/docs/).
 
-Clone this repository:
+1. Clone this repository:
 
 ```shell
 git clone https://github.com/IgalKolihman/netport.git
 ```
 
-Install the development environment:
+2. Install the development environment:
 
 ```shell
 poetry install --with dev
