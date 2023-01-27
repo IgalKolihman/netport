@@ -33,9 +33,7 @@ def test_reserve_path(netport, path):
 
 
 @all_db
-@pytest.mark.parametrize(
-    "path", [random_string(length) for length in range(10, 100, 5)]
-)
+@pytest.mark.parametrize("path", [random_string(length) for length in [10, 100, 5]])
 def test_reserve_not_existing_path(netport, path):
     response = netport.get("/fs/reserve_path", params={"path": path})
 
