@@ -43,6 +43,7 @@ black = "^22.10.0"
 pytest-sugar = "^0.9.5"
 pytest-repeat = "^0.9.1"
 pytest-clarity = "^1.0.1"
+flake8-print = "^5.0.0"
 
 [tool.poetry.group.quality.dependencies]
 flake8 = "^5.0.4"
