@@ -26,6 +26,7 @@ import json
 
 import uvicorn
 from docopt import docopt
+from loguru import logger
 
 DEFAULT_HOST = "0.0.0.0"
 DEFAULT_PORT = 80
@@ -41,7 +42,7 @@ def generate_open_api_scheme(scheme_path: None):
     with open(scheme_path, "w") as scheme_file:
         json.dump(scheme, scheme_file)
 
-    print(f"The Netport scheme was exported to {scheme_path}")
+    logger.success(f"The Netport scheme was exported to {scheme_path}")
 
 
 def main():
@@ -49,8 +50,6 @@ def main():
     if args["-g"]:
         generate_open_api_scheme(args["<path>"])
         exit()
-
-    print(args)
 
     host = args["<host>"] if args["--host"] else DEFAULT_HOST
     port = int(args["<port>"]) if args["--port"] else DEFAULT_PORT
