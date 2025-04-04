@@ -4,16 +4,16 @@
 Contains all netport functionalities.
 """
 import os
-import re
-import uuid
-import socket
 import platform
+import re
+import socket
 import subprocess
+import uuid
 from os.path import exists
 
 import psutil
-from loguru import logger
 from fastapi import FastAPI, Request
+from loguru import logger
 from redis import exceptions as redis_errors
 
 from netport.common import R_PORT, R_PATH, R_PROCESS, Response
@@ -174,10 +174,7 @@ def reserve_path(request: Request, path: str):
 def execute_command(command: str):
     """Run a shell command and returns its result."""
     return Response(
-        data=subprocess.call(
-            command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-        )
-        == 0
+        data=subprocess.call(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
     )
 
 
@@ -234,9 +231,7 @@ def run_app():
             raise AttributeError
 
         db = RedisDatabase(host=redis_host, port=redis_port, db_instance=redis_db)
-        logger.success(
-            f"Connected to Redis database at {redis_host}:{redis_port},{redis_db}"
-        )
+        logger.success(f"Connected to Redis database at {redis_host}:{redis_port},{redis_db}")
 
     except AttributeError:
         db = LocalDatabase()

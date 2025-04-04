@@ -49,9 +49,7 @@ def netport(pytestconfig, request):
         # Release any resources that were reserved during the test
         if request.param:
             response = client.get("/db/release_client")
-            assert (
-                response.status_code == 200
-            ), "Something went wrong while releasing the client"
+            assert response.status_code == 200, "Something went wrong while releasing the client"
 
     finally:
         pop_env_key("NETPORT_REDIS_HOST")

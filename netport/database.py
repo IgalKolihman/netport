@@ -1,11 +1,11 @@
 """Netport integration with different databases."""
+import datetime
 import re
 import time
-import datetime
 
+from redis import exceptions as redis_errors
 from redis.client import Redis
 from redis.exceptions import ResponseError
-from redis import exceptions as redis_errors
 
 
 class IDatabase:
@@ -19,9 +19,7 @@ class IDatabase:
         """Reserve some resource for a client."""
         raise NotImplementedError
 
-    def get_client_resources(
-        self, client_ip: str, resource_regex: str = "*", value_regex: str = "*"
-    ):
+    def get_client_resources(self, client_ip: str, resource_regex: str = "*", value_regex: str = "*"):
         """Get all the client resources that match the resource regex pattern."""
         raise NotImplementedError
 
@@ -92,10 +90,7 @@ class RedisDatabase(IDatabase):
                 for _ in self.get_client_resources(client, resource, value):
                     return True
             except ResponseError as redis_error:
-                if (
-                    "WRONGTYPE Operation against a key holding the wrong kind of value"
-                    in redis_error.args[0]
-                ):
+                if "WRONGTYPE Operation against a key holding the wrong kind of value" in redis_error.args[0]:
                     raise MemoryError(
                         "Seems like the Redis database have some keys that do not belong to "
                         f"Netport. Found the key '{client}'. Before continuing remove those types "
@@ -115,16 +110,12 @@ class RedisDatabase(IDatabase):
             self._db.hset(
                 client_ip,
                 f"{resource}:{value}",
-                datetime.datetime.utcfromtimestamp(time.time()).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                ),
+                datetime.datetime.utcfromtimestamp(time.time()).strftime("%Y-%m-%d %H:%M:%S"),
             )
             == 1
         )
 
-    def get_client_resources(
-        self, client_ip: str, resource_regex: str = "*", value_regex: str = "*"
-    ):
+    def get_client_resources(self, client_ip: str, resource_regex: str = "*", value_regex: str = "*"):
         """Get all the client resources that match the resource regex pattern."""
         return self._db.hscan_iter(client_ip, match=f"{resource_regex}:{value_regex}")
 
@@ -187,9 +178,7 @@ class LocalDatabase(IDatabase):
 
         return True
 
-    def get_client_resources(
-        self, client_ip: str, resource_regex: str = r"(.)+", value_regex: str = r"(.)+"
-    ):
+    def get_client_resources(self, client_ip: str, resource_regex: str = r"(.)+", value_regex: str = r"(.)+"):
         """Get all the client resources that match the resource regex pattern."""
         if client_ip not in list(self._data.keys()):
             return []

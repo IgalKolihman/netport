@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netport"
-version = "0.4.0"
+version = "0.5.0"
 description = "Tool for managing resources on a remove machine using openapi"
 authors = ["Igal Kolihman <igalk.spam@gmail.com>"]
 license = "MIT"
@@ -14,10 +14,10 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System",
     "Framework :: FastAPI",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10"
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13"
 ]
 include = [
     "LICENSE.md",
@@ -26,14 +26,16 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
-redis = "^4.3.4"
-psutil = "^5.9.2"
+python = ">=3.10,<=3.14"
+redis = "^5.2.1"
+psutil = "^7.0.0"
 docopt = "^0.6.2"
-loguru = "^0.6.0"
-fastapi = "^0.85.0"
+loguru = "^0.7.3"
+fastapi = "^0.115.12"
 requests = "^2.28.1"
-uvicorn = { extras = ["standard"], version = "^0.18.3" }
+uvicorn = { extras = ["standard"], version = "^0.34.0" }
+anyio = "^4.9.0"
+httpx = "^0.28.1"
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.9"

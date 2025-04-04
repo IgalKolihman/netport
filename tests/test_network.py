@@ -45,9 +45,7 @@ def test_port_is_reserved_after_requesting_it(netport):
         params={"resource": R_PORT, "value": used_port},
     )
 
-    assert (
-        response.json()["data"] is True
-    ), f"The port {used_port} wasn't reserved in the database"
+    assert response.json()["data"] is True, f"The port {used_port} wasn't reserved in the database"
 
 
 @all_db
