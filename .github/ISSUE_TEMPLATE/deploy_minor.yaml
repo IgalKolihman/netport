@@ -1,0 +1,18 @@
+name: Deploy Minor Version
+description: "Request to deploy a new minor version of netport"
+title: "Deploy New Minor Version"
+labels: [ "deployment", "release" ]
+
+body:
+  - type: textarea
+    id: release-notes
+    attributes:
+      label: Release Notes
+      description: Please provide a summary of the changes in this version.
+      placeholder: Tell us what you see!
+  - type: markdown
+    attributes:
+      value: |
+        ## Deploy New Minor Version
+        
+        This issue is to track the deployment of a new version of netport.

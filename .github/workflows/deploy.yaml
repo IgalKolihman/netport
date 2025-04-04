@@ -1,0 +1,84 @@
+name: Publish to PyPI
+on:
+  issues:
+    types: [ opened, labeled, edited ]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v4
+
+      - name: Update version based on issue title
+        run: |
+          ISSUE_TITLE=$(echo "${{ github.event.issue.title }}")
+          if [[ "$ISSUE_TITLE" == "Deploy New Patch Version" ]]; then
+            poetry version patch
+          elif [[ "$ISSUE_TITLE" == "Deploy New Minor Version" ]]; then
+            poetry version minor
+          elif [[ "$ISSUE_TITLE" == "Deploy New Major Version" ]]; then
+            poetry version major
+          else
+            echo "No version update specified in issue title."
+          fi
+
+      - name: Build the package
+        run: |
+          PACKAGE_VERSION=$(poetry version --short)
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+          poetry build
+
+      - name: Install the package
+        run: |
+          WHL_FILE=$(ls dist/netport-${{ env.PACKAGE_VERSION }}-py3-none-any.whl)
+          pip install "$WHL_FILE"
+
+      - name: Upload .whl file as artifact
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: netport_whl
+          path: dist/netport-${{ env.PACKAGE_VERSION }}-py3-none-any.whl
+          retention-days: 2
+
+      - name: Verify the package
+        run: |
+          netport --version
+
+      #      - name: Upload to PyPI
+      #        env:
+      #          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+      #          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      #        run: |
+      #          WHL_FILE=$(ls dist/netport-${{ env.PACKAGE_VERSION }}-py3-none-any.whl)
+      #          TAR_GZ_FILE=$(ls dist/netport-${{ env.PACKAGE_VERSION }}.tar.gz)
+      #          poetry run twine upload --verbose --repository pypi "$WHL_FILE"
+      #          poetry run twine upload --verbose --repository pypi "$TAR_GZ_FILE"
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit version change
+        run: |
+          git add pyproject.toml
+          git commit -m "Bump version to ${{ env.PACKAGE_VERSION }}"
+
+      - name: Push changes
+        run: |
+          git push origin main

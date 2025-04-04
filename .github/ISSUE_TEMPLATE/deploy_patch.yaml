@@ -1,0 +1,18 @@
+name: Deploy Patch Version
+description: "Request to deploy a new patch version of netport"
+title: "Deploy New Patch Version"
+labels: [ "deployment", "release" ]
+
+body:
+  - type: textarea
+    id: release-notes
+    attributes:
+      label: Release Notes
+      description: Please provide a summary of the changes in this version.
+      placeholder: Tell us what you see!
+  - type: markdown
+    attributes:
+      value: |
+        ## Deploy New Patch Version
+        
+        This issue is to track the deployment of a new version of netport.
