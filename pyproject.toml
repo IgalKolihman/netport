@@ -29,13 +29,13 @@ include = [
 python = ">=3.10,<=3.14"
 redis = "^5.2.1"
 psutil = "^7.0.0"
-docopt = "^0.6.2"
 loguru = "^0.7.3"
 fastapi = "^0.115.12"
 requests = "^2.28.1"
 uvicorn = { extras = ["standard"], version = "^0.34.0" }
 anyio = "^4.9.0"
 httpx = "^0.28.1"
+cleo = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.9"
@@ -60,7 +60,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-netport = 'scripts.cli:main'
+netport = 'netport.scripts.cli:main'
 
 [tool.pytest.ini_options]
 redis = { host = "127.0.0.1", port = "6379", db = "0" }
