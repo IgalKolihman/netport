@@ -22,9 +22,7 @@ def test_path_exist(netport):
 
 
 @all_db
-@pytest.mark.parametrize(
-    "path", [p.absolute() for p in list(Path(".").rglob("*.py"))[:10]]
-)
+@pytest.mark.parametrize("path", [p.absolute() for p in list(Path(".").rglob("*.py"))[:10]])
 def test_reserve_path(netport, path):
     response = netport.get("/fs/reserve_path", params={"path": path})
 
@@ -38,6 +36,4 @@ def test_reserve_not_existing_path(netport, path):
     response = netport.get("/fs/reserve_path", params={"path": path})
 
     assert response.status_code == 200
-    assert (
-        response.json()["data"] is False
-    ), f"The server reserved a path that it didn't suppose to: '{path}'"
+    assert response.json()["data"] is False, f"The server reserved a path that it didn't suppose to: '{path}'"
